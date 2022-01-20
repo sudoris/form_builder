@@ -2,14 +2,19 @@
   <div>
     <div class="container">
       <div class="menu">
-        <p v-for="field in fields" style="margin-top: 12px;">
+        <p v-for="field in fields">
           {{field.fieldType}}
         </p>
       </div>
       <div class="fields-container">
         <div class="fields" v-for="(field, index) in fields" :key="field.key">
           <div class="content">
-            <component :is="field.fieldType" :label="field.label" @updateLabel="field.label = $event"></component>
+            <component 
+              :is="field.fieldType" 
+              :label="field.label" @updateLabel="field.label = $event" 
+              :options="field.options" 
+              @updateOptions="updateOptions($event)">
+            </component>
           </div>
           <div class="settings">      
             <select v-model="field.fieldType">
@@ -45,11 +50,24 @@ export default {
     return {
       schema: {},            
       fields: [
-        { key: Date.now(), fieldType: 'ShortText', label: '', options: [] }
+        { 
+          key: Date.now(), 
+          fieldType: 'ShortText', 
+          label: '', 
+          options: [
+            {
+              key: Date.now(),
+              label: ''
+            }
+          ]
+        }
       ]
     }
   },
   methods: {
+    updateOptions(value) {
+
+    },
     updateLabel(value, index) {
       
     },
@@ -82,7 +100,7 @@ export default {
   justify-content: space-around;
   width: 100%;
   gap: 4%;
-  margin-bottom: 12px;
+  margin-bottom: 36px;
 }
 
 /* .col-1 {

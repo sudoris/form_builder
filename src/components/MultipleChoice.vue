@@ -13,12 +13,9 @@
 <script>
 export default {
   name: 'MultipleChoice',
-  components: {
-    
-  },
+  props: ['label', 'options']
   data() {
     return {
-      label: '',
       options: [
         {
           key: Date.now(),
@@ -28,11 +25,24 @@ export default {
     }
   },
   computed: {
-    computedOptions() {      
-      return this.options.map((option, index) => {
-        option.key = index
-        return option
-      })
+    computedLabel: {
+      get() {
+        return this.label;
+      },
+      set(val) {
+        this.$emit('updateLabel', val);
+      }
+    },
+    computedOptions() { 
+      get() {
+        return this.options.map((option, index) => {
+          option.key = index
+          return option
+        })
+      },
+      set(val) {
+        this.$emit('updateOptions', val);
+      }         
     }
   },
   methods: {
