@@ -17,10 +17,10 @@ export default {
   computed: {
     computedLabel: {
       get() {
-        return this.label;
+        return this.label
       },
       set(val) {
-        this.$emit('updateLabel', val);
+        this.$emit('updateLabel', val)
       }
     }
   }

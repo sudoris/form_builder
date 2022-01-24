@@ -1,9 +1,9 @@
 <template>
   <div>      
-    <input placeholder="Enter a label" type="text" v-model="label" style="margin-bottom: 12px; width: 100%;">      
+    <input placeholder="Enter a label" type="text" v-model="computedLabel" style="margin-bottom: 12px; width: 100%;">      
     <div v-for="(option, idx) in options" style="display: flex; margin-bottom: 8px;" :key="option.key">
       <input type="radio" @input="preventCheck">   
-      <input :placeholder="getPlaceholder(idx)" type="text" v-model="option.label" style="width: 100%;">  
+      <input :placeholder="getPlaceholder(idx)" type="text" @input="updateOptionLabel($event, idx)" style="width: 100%;">  
       <button type="button" style="margin-left: 8px; cursor: pointer;" @click="removeOption(option)">X</button> 
     </div>
     <button type="button" style="margin-top: 12px;" @click="addOption">Add option</button>    
@@ -13,39 +13,42 @@
 <script>
 export default {
   name: 'MultipleChoice',
-  props: ['label', 'options']
+  props: ['label', 'options'],
   data() {
     return {
-      options: [
-        {
-          key: Date.now(),
-          label: ''
-        }
-      ]
+      // options: [
+      //   {
+      //     key: Date.now(),
+      //     label: ''
+      //   }
+      // ]
     }
   },
   computed: {
     computedLabel: {
       get() {
-        return this.label;
+        return this.label
       },
       set(val) {
-        this.$emit('updateLabel', val);
+        this.$emit('updateLabel', val)
       }
-    },
-    computedOptions() { 
-      get() {
-        return this.options.map((option, index) => {
-          option.key = index
-          return option
-        })
-      },
-      set(val) {
-        this.$emit('updateOptions', val);
-      }         
     }
+    // computedOptions: { 
+    //   get() {
+    //     return this.options.map((option, index) => {
+    //       option.key = index
+    //       return option
+    //     })
+    //   },
+    //   set(val) {
+    //     this.$emit('updateOptions', val)
+    //   }         
+    // }
   },
   methods: {
+    updateOptionLabel(e, idx) {
+      this.$emit('updateOptionLabel', {idx: idx, val: e.target.value})
+    },
     removeOption(option) {
       const index = this.options.findIndex(e => e.key === option.key)
       this.options.splice(index, 1)

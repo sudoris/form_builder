@@ -13,7 +13,8 @@
               :is="field.fieldType" 
               :label="field.label" @updateLabel="field.label = $event" 
               :options="field.options" 
-              @updateOptions="updateOptions($event)">
+              @updateOptionLabel="field.options[$event.idx].label = $event.val"
+              @removeOption="field.options.splice(index, 1)">
             </component>
           </div>
           <div class="settings">      
@@ -65,17 +66,63 @@ export default {
     }
   },
   methods: {
-    updateOptions(value) {
-
+    updateOptionLabel(payload) {
+      console.log(payload)
     },
     updateLabel(value, index) {
       
     },
     generatePreview() {
+      const schema = this.generateSchema()
+    },
+    generateSchema() {
+      const schema = {}
+      
+      for (const field of fields) {
+        if (!schema.properties) {
+          schema.properties = {}
+        }
 
+        if (field.label) {
+          const key = this.toSnakeCase(field.label)
+          schema.properties[key] = {}
+          schema.properties[key].dataType = this.getDataType(field.fieldType)
+          schema.properties[key].fieldType = field.fieldType
+          
+          // if (field.fieldType )
+        }
+
+      }
+    },
+    getDataType(fieldType) {
+      const dataTypeMap = {
+        ShortText: 'string',
+        MultipleChoice: 'string'
+      }
+      return dataTypeMap[fieldType]
+    },
+    toSnakeCase(string) {
+      return string.charAt(0).toLowerCase() + string.slice(1) // lowercase the first character
+      .replace(/\W+/g, " ") // Remove all excess white space and replace & , . etc.
+      .replace(/([a-z])([A-Z])([a-z])/g, "$1 $2$3") // Put a space at the position of a camelCase -> camel Case
+      .split(/\B(?=[A-Z]{2,})/) // Now split the multi-uppercases customerID -> customer,ID
+      .join(' ') // And join back with spaces.
+      .split(' ') // Split all the spaces again, this time we're fully converted
+      .join('_') // And finally snake_case things up
+      .toLowerCase() // With a nice lower case
     },
     addField() {
-      this.fields.push({ key: Date.now(), fieldType: 'ShortText', label: '', options: [] })
+      this.fields.push({ 
+        key: Date.now(), 
+        fieldType: 'ShortText', 
+        label: '', 
+        options: [
+          {
+            key: Date.now(),
+            label: ''
+          }
+        ]
+      })
     }
   }
 }
